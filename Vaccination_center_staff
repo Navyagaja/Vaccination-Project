@@ -1,0 +1,31 @@
+from flask import Flask, request
+import pymongo , json
+from bson.objectid import ObjectId
+from bson import json_util
+
+#Creating the Flask app
+app=Flask(__name__)
+
+#Connecting to the Database
+client = pymongo.MongoClient("mongodb+srv://Project:bmnp12105@cluster0.vgwcjai.mongodb.net/")
+db = client.VaccinationProject
+
+@app.route('/vaccination_center_staff_create', methods=['POST'])
+def vaccination_center_staff_create():
+    json = request.json
+    id = db.Vaccination_center_staff.insert_one(json)
+    return "Vaccination Center Staff Record was created sucessfully. ID: " + str(id.inserted_id)
+
+
+# Get vaccination staff details based on his email. (whoever staff login , his profile should pop up)
+@app.route('/vaccination_center_staff_email', methods=['GET'])
+def getStaffDetails():
+    email = request.args.get('email')
+    print(email)
+    staff = db.Vaccination_center_staff.find({"email": email})
+    output = json.loads(json_util.dumps(staff))
+    return output
+
+
+if __name__ == '__main__':
+    app.run()

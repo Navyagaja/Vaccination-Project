@@ -34,8 +34,15 @@ def get_doses():
     return output
 
 
-
-
+# To get the available locations, available timeslots on the selected date from vaccination center
+@app.route('/getAvailableLocationsAndSlots', methods=['GET'])
+def get_available_slots():
+    date = request.args.get('date')
+    # Only get location and availableTimeSlots from the database
+    locations = db.Vaccination_center.find({"avaliableDates": {"$in": [date]}}, {"center_name":1, "location": 1, "availableTimeSlots": 1})
+    # slots = []
+    output = json.loads(json_util.dumps(locations))
+    return output
 
 
 if __name__ == '__main__':
